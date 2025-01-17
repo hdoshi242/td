@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Responsive YouTube Sync</title>
+  <script src="https://www.youtube.com/iframe_api"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 20px;
+    background-color: black;
+    }
+    #video-container {
+      display: none;
+      margin-top: 20px;
+    }
+    iframe {
+      width: 100%;
+      max-width: 320px;
+      height: 250px;
+      margin: 10px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    @media (min-width: 768px) {
+      iframe {
+        max-width: 640px;
+        height: 360px;
+      }
+    }
+#my{
+zoom: 80%;
+}
+  </style>
+</head>
+<body>
+  <h1>Responsive YouTube Sync</h1>
+  <button id="show-videos">Show and Play Videos</button>
+  <div id="video-container">
+    <div id="player1"></div>
+    <div id="player2"></div>
+  </div>
+
+  <script>
+    let player1, player2;
+
+    // YouTube IFrame API ready function
+    function onYouTubeIframeAPIReady() {
+      player1 = new YT.Player('player1', {
+        videoId: 's5lOHuR8s9Y', // First random video
+        playerVars: {
+          rel: 0, // Disable related videos
+          autoplay: 0, // Disable autoplay initially
+        },
+        events: {
+          'onReady': setVideoQuality1080p,
+          'onStateChange': onPlayerStateChange
+        }
+      });
+
+      player2 = new YT.Player('player2', {
+        videoId: 'gLTAN2I-iQc', // Second random video
+        playerVars: {
+          rel: 0, // Disable related videos
+          autoplay: 0, // Disable autoplay initially
+        },
+        events: {
+          'onReady': setVideoQuality1080p,
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+
+    // Function to set video quality to 1080p
+    function setVideoQuality1080p(event) {
+      const player = event.target;
+      player.setPlaybackQuality('hd1080');
+    }
+
+    // Synchronize play/pause states
+    function onPlayerStateChange(event) {
+      if (event.data === YT.PlayerState.PLAYING) {
+        if (event.target === player1) {
+          player2.playVideo();
+        } else if (event.target === player2) {
+          player1.playVideo();
+        }
+      } else if (event.data === YT.PlayerState.PAUSED) {
+        if (event.target === player1) {
+          player2.pauseVideo();
+        } else if (event.target === player2) {
+          player1.pauseVideo();
+        }
+      }
+    }
+
+    // Show videos and start playing when the button is clicked
+    document.getElementById('show-videos').addEventListener('click', () => {
+      document.getElementById('video-container').style.display = 'block';
+      player1.playVideo();
+      player2.playVideo();
+    });
+  </script>
+</body>
+</html>
